@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { isValidObjectId } from 'mongoose';
 import Controller, { RequestWithBody, ResponseError } from '.';
 import { Car } from '../interfaces/CarInterface';
-import isReqsValids from '../middlewares/validators';
 import Service from '../services';
 import CarService from '../services/car.service';
 
@@ -78,7 +77,7 @@ export default class CarController extends Controller<Car> {
       const { id } = req.params;
       const { body } = req;
 
-      if (!isReqsValids(id, body)) {
+      if (!this.isReqsValids(id, body)) {
         return res.status(400).json({ error: this.errors.minChar });
       }
 
@@ -112,5 +111,11 @@ export default class CarController extends Controller<Car> {
     } catch (error) {
       return res.status(500).json({ error: this.errors.internal });
     }
+  };
+
+  private isReqsValids = (id: string, body: unknown) => {
+    if ([id, body].some((arg: unknown) => !arg)) return false;
+    if (!isValidObjectId(id)) return false;
+    return true;
   };
 }
