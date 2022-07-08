@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { isValidObjectId } from 'mongoose';
 import Controller, { RequestWithBody, ResponseError } from '.';
 import { Car } from '../interfaces/CarInterface';
+import isReqsValids from '../middlewares/validators';
 import Service from '../services';
 import CarService from '../services/car.service';
 
@@ -13,9 +14,7 @@ export default class CarController extends Controller<Car> {
     this._route = route;
   }
 
-  get route() {
-    return this._route;
-  }
+  get route() { return this._route; }
   
   create = async (
     req: RequestWithBody<Car>,
@@ -58,9 +57,7 @@ export default class CarController extends Controller<Car> {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-      return res
-        .status(400)
-        .json({ error: this.errors.minChar });
+      return res.status(400).json({ error: this.errors.minChar });
     }
 
     try {
@@ -74,23 +71,45 @@ export default class CarController extends Controller<Car> {
   };
 
   update = async (
-    req: RequestWithBody<Car>,
+    req: Request<{ id: string }>,
+    res: Response<Car | ResponseError>,
+  ): Promise<typeof res> => {
+    try {
+      const { id } = req.params;
+      const { body } = req;
+
+      if (!isReqsValids(id, body)) {
+        return res.status(400).json({ error: this.errors.minChar });
+      }
+
+      const car = await this.service.update(id, body);
+
+      if (car === null) {
+        return res.status(404).json({ error: this.errors.notFound });
+      }
+      if ('error' in car) return res.status(400).json(car);
+      
+      return res.status(200).json(car);
+    } catch (err) {
+      return res.status(500).json({ error: this.errors.internal });
+    }
+  };
+
+  delete = async (
+    req: Request<{ id: string; }>,
     res: Response<Car | ResponseError>,
   ): Promise<typeof res> => {
     const { id } = req.params;
 
-    if (!id) return res.status(400).json({ error: this.errors.requiredId });
-
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ error: this.errors.minChar });
+    }
     try {
-      const { body } = req;
-      const car = await this.service.update(id, body);
-
-      if (!car) return res.status(400).json({ error: this.errors.notFound });
-      if ('error' in car) return res.status(400).json(car);
-
-      return res.status(200).json(car);
+      const car = await this.service.delete(id);
+      return car
+        ? res.status(204).json(car)
+        : res.status(404).json({ error: this.errors.notFound });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ error: this.errors.internal });
     }
   };
