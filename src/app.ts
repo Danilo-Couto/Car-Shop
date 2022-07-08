@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import express, { NextFunction, Router } from 'express';
 import connectToDatabase from './connection';
 
 class App {
@@ -19,6 +19,10 @@ class App {
 
   public addRouter(router: Router) {
     this.app.use(router);
+  }
+
+  public addMidlleware(middleware: NextFunction) {
+    this.app.use(middleware);
   }
 
   public getApp() {

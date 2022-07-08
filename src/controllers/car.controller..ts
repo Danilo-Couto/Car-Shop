@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { isValidObjectId } from 'mongoose';
 import Controller, { RequestWithBody, ResponseError } from '.';
 import { Car } from '../interfaces/CarInterface';
 import Service from '../services';
@@ -50,20 +51,27 @@ export default class CarController extends Controller<Car> {
     }
   };
 
-  // readOne = async (
-  //   req: Request<{ id: string; }>,
-  //   res: Response<Car | ResponseError>,
-  // ): Promise<typeof res> => {
-  //   const { id } = req.params;
-  //   try {
-  //     const car = await this.service.readOne(id);
-  //     return car
-  //       ? res.json(car).json(car)
-  //       : res.status(404).json({ error: this.errors.notFound });
-  //   } catch (error) {
-  //     return res.status(500).json({ error: this.errors.internal });
-  //   }
-  // };
+  readOne = async (
+    req: Request<{ id: string }>,
+    res: Response<Car | ResponseError>,
+  ): Promise<typeof res> => {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+      return res
+        .status(400)
+        .json({ error: this.errors.minChar });
+    }
+
+    try {
+      const car = await this.service.readOne(id);
+      return car
+        ? res.status(200).json(car)
+        : res.status(404).json({ error: this.errors.notFound });
+    } catch (error) {
+      return res.status(500).json({ error: this.errors.internal });
+    }
+  };
 
   update = async (
     req: RequestWithBody<Car>,
@@ -72,7 +80,6 @@ export default class CarController extends Controller<Car> {
     const { id } = req.params;
 
     if (!id) return res.status(400).json({ error: this.errors.requiredId });
-    // if (id.length < 24) retutn.status(404).json({ error: 'Id must have 24 hexadecimal characters ' });
 
     try {
       const { body } = req;
