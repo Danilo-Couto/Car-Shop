@@ -2,30 +2,10 @@ import { expect } from 'chai';
 import mongoose from 'mongoose';
 import Sinon, { SinonStub } from 'sinon';
 import CarModel, { CarMongooseModel } from '../../../models/car.model';
-
-const carMock = {
-    model: 'Ferrari Maranello',
-    year: 1963,
-    color: 'red',
-    buyValue: 3500000,
-    seatsQty: 2,
-    doorsQty: 2
-};
-
-const carMockUpdated = {
-    model: 'Aston Martin',
-    year: 1993,
-    color: 'blue',
-    buyValue: 30500000,
-    seatsQty: 4,
-    doorsQty: 4
-};
-
-const validId = '41224d776a326fb40f000001';
-const invalidId = '1'
+import { carMock, carMockUpdated, validId } from '../mocks/carMocks';
 
 describe('Tests Model', () => {
-    describe('Tests Create method', () => {
+    describe('success', () => {
       before(() => {
         Sinon.stub(mongoose.Model, 'create').resolves(carMock);
       });
@@ -34,7 +14,7 @@ describe('Tests Model', () => {
         (mongoose.Model.create as SinonStub).restore();
       })
   
-      it('should return mocked object', async () => {
+      it('success', async () => {
         const carModel = new CarModel(CarMongooseModel)
         const carCreated = await carModel.create(carMock);
         expect(carCreated).to.be.deep.equal(carMock);
@@ -50,7 +30,7 @@ describe('Tests Model', () => {
           (mongoose.Model.find as SinonStub).restore();
         })
     
-        it('tests create method', async () => {
+        it('success', async () => {
           const carModel = new CarModel(CarMongooseModel)
           const car = await carModel.read();
           expect(car).to.be.deep.equal([carMock]);
@@ -66,7 +46,7 @@ describe('Tests Model', () => {
         (mongoose.Model.findOne as SinonStub).restore();
     })
 
-    it('tests create method', async () => {
+    it('success', async () => {
         const carModel = new CarModel(CarMongooseModel)
         const car = await carModel.readOne(validId);
         expect(car).to.be.deep.equal(carMock);
@@ -82,7 +62,7 @@ describe('Tests Update method', () => {
         (mongoose.Model.findOneAndUpdate as SinonStub).restore();
     })
 
-    it('tests create method', async () => {
+    it('success', async () => {
         const carModel = new CarModel(CarMongooseModel)
         const car = await carModel.update(validId, carMockUpdated);
         expect(car).to.be.deep.equal(carMockUpdated);
@@ -98,7 +78,7 @@ describe('Tests Delete method', () => {
         (mongoose.Model.findOneAndDelete as SinonStub).restore();
     })
 
-    it('tests create method', async () => {
+    it('success', async () => {
         const carModel = new CarModel(CarMongooseModel)
         const car = await carModel.delete(validId);
         expect(car).to.be.deep.equal(null);
