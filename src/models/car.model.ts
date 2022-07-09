@@ -2,7 +2,7 @@ import { Schema, model as createModel, Document } from 'mongoose';
 import { Car } from '../interfaces/CarInterface';
 import MongoModel from './mongo.model';
 
-interface CarDocument extends Car, Document { }
+export interface CarDocument extends Car, Document { }
 
 export const carSchema = new Schema<CarDocument>(
   {
@@ -19,10 +19,10 @@ export const carSchema = new Schema<CarDocument>(
   },
 );
 
+export const CarMongooseModel = createModel('Cars', carSchema);
+
 class CarModel extends MongoModel<Car> {
-  constructor(
-    model = createModel('Cars', carSchema),
-  ) {
+  constructor(model = CarMongooseModel) {
     super(model);
   }
 }
