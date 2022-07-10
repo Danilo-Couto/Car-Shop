@@ -1,8 +1,9 @@
 import { expect } from 'chai';
+import { invalid } from 'joi';
 import Sinon, { SinonStub } from 'sinon';
 import CarModel, { CarMongooseModel } from '../../../models/car.model';
 import CarService from '../../../services/car.service';
-import { carMock, carMockUpdated, validId } from '../mocks/carMocks';
+import { carMock, carMockUpdated, invalidId, validId } from '../mocks/carMocks';
 
 describe('Tests Service', () => {
     describe('Test Create Method', () => {
@@ -20,6 +21,18 @@ describe('Tests Service', () => {
     it('Success', async () => {
       const cars = await carService.create(carMock);
       expect(cars).to.be.deep.equal(carMock);
+    });
+    
+    it('Fail', async () => {
+      const cars = await carService.create({
+        model: '',
+        year: 0,
+        color: '',
+        buyValue: 0,
+        doorsQty: 0,
+        seatsQty: 0
+      });
+      expect(cars).to.haveOwnProperty('error');
     });
   });
 
