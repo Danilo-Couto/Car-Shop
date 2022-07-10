@@ -83,7 +83,7 @@ export default class CarController extends Controller<Car> {
 
       const car = await this.service.update(id, body);
 
-      if (car === null) {
+      if (!car) {
         return res.status(404).json({ error: this.errors.notFound });
       }
       if ('error' in car) return res.status(400).json(car);

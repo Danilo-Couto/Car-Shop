@@ -5,7 +5,15 @@ import MongoModel from './mongo.model';
 export interface MotorcycleDocument extends Motorcycle, Document { }
 
 export const motorcycleSchema = new Schema<MotorcycleDocument>(
-  {},
+  {
+    model: String,
+    year: Number,
+    color: String,
+    status: Boolean,
+    buyValue: Number, 
+    category: String,
+    engineCapacity: Number,
+  },
   {
     versionKey: false,
   },
