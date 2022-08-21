@@ -1,8 +1,17 @@
 # Boas-vindas ao repositório do projeto Car Shop!
 
-# Requisitos
+Projeto aplicando os princípios de POO para a construção de uma API com CRUD para gerenciar uma concessionária e veículos utilizando o banco de dados MongoDB.
 
-## Requisitos Obrigatórios
+API com TypeScript na arquitetura MSC, aplicando os pilares de POO e utilizando o ODM Mongoose para se conectar com um banco de dados MongoDB.
+
+Resumo:
+- Pilares da Programação Orientada a Objetos: Herança, Abstração, Encapsulamento e Polimorfismo;
+- Utilização de Composição;
+- Criação e utilização de Interfaces;
+- Implementação em TypeScript: Classes, Instâncias, Atributos, Métodos e Objetos;
+- MongoDB
+
+# Requisitos
 
 ### 01 - Crie a interface `Model` genérica
 
